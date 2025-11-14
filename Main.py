@@ -3,9 +3,6 @@ import Player
 import Blocks
 import pygame as game
 
-
-import pygame
-
 # pygame setup
 game.init()
 screen = game.display.set_mode((1280, 720))
