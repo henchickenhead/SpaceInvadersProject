@@ -7,7 +7,7 @@ class Tile(pygame.sprite.Sprite): # Element used to build larger structures
     self.image.fill(colour) # Tile colour
     self.rect = self.image.get_rect(topleft=pos) # Positioning of the tile
 
-Pattern = [ # 2D list defining the tiles for the shape
+pattern = [ # 2D list defining the tiles for the shape
   [0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0],
   [0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0],
   [0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
