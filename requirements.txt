@@ -1,0 +1,5 @@
+pygame>=2.1
+pytest
+flake8
+black
+pre-commit
