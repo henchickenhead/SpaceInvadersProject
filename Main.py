@@ -16,6 +16,7 @@ while running:
             running = False
 
     if event.type == game.KEYDOWN:
+        print("Hello World")
         if event.key == game.K_ESCAPE or event.key == game.K_x:
             print("Exiting game...")
             game.display.quit()
