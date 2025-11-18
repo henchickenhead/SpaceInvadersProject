@@ -29,13 +29,13 @@ class Shape: # class based on a pattern
     self.tile_size = tile_size # used to calculate tile spacing
     self.build(pattern, origin) # method to build the tile layout
 
-def build(self, pattern, offset): # changing pattern into tile objects
-  ox, oy = offset # x and y coordiates for where the shape should be at
-  step = self.tile_size # for the pixel distance between tiles
+  def build(self, pattern, offset): # changing pattern into tile objects
+    ox, oy = offset # x and y coordiates for where the shape should be at
+    step = self.tile_size # for the pixel distance between tiles
 
-for r_idx, row in enumerate(pattern): # loops each row in the pattern then provides an index
-  for c_idx, cell in enumerate(row): # loops each column in the row
-    if cell: # checking if pattern cell is 1
-      pos = (ox + c_idx * step, oy + r_idx * step) # finds out the pixel location where the shape should appear
-      tile = Tile(pos, size=step) # creation of a tile object at a location
-      self.tiles.add(tile) # puts a new tile to the sprite group
+    for r_idx, row in enumerate(pattern): # loops each row in the pattern then provides an index
+      for c_idx, cell in enumerate(row): # loops each column in the row
+        if cell: # checking if pattern cell is 1
+          pos = (ox + c_idx * step, oy + r_idx * step) # finds out the pixel location where the shape should appear
+          tile = Tile(pos, size=step) # creation of a tile object at a location
+          self.tiles.add(tile) # puts a new tile to the sprite group
