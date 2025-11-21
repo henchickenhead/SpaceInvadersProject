@@ -1,7 +1,7 @@
 import pygame as game
 
 class Alien(game.sprite.Sprite): 
-    def __init__(self, pos, size=1):
+    def __init__(self, pos, size=40):
         super().__init__() 
         self.image = game.Surface((size, size))
         self.image.fill((0,255,0))
@@ -70,7 +70,8 @@ class AlienAbility:
         self.isBorderRight = False
         self.isAtBottom = False
         self.tiles = game.sprite.Group() 
-        self.tile_size = 1
+        # increase tile size so the alien icon is visible on screen
+        self.tile_size = 6
         self.pattern = pattern
         self.bullet = AlienBulletPattern
         
@@ -87,3 +88,7 @@ class AlienAbility:
                     self.tiles.add(tile)
 
     
+# next steps
+# movement
+# shooting
+#disappearing when hit
