@@ -1,4 +1,5 @@
 import shape
+import aliens
 import sys
 import pygame as game
 
@@ -18,9 +19,9 @@ while running:
     if event.type == game.KEYDOWN:
         if event.key == game.K_ESCAPE or event.key == game.K_x:
             print("Exiting game...")
-            game.display.quit()
             running = False
         elif event.key == game.K_f:
+            print("toggling fullscreen")
             game.display.toggle_fullscreen()
     
 
@@ -30,10 +31,11 @@ while running:
     # RENDER YOUR GAME HERE
     my_shape = shape.Shape((100, 100), tile_size=5)
     my_shape.tiles.draw(screen)
+    for i in range(5):
+        alien_ability = aliens.AlienAbility(aliens.AlienIconPattern1)
+        alien_ability.build( (300 + i * 50), 300)
+        alien_ability.tiles.draw(screen)
 
-
-    # flip() the display to put your work on screen
-    game.display.flip()
 
     clock.tick(60)  # limits FPS to 60
 
