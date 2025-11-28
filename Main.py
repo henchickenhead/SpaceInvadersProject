@@ -5,7 +5,7 @@ import pygame as game
 
 # pygame setup
 game.init()
-screen = game.display.set_mode((1920, 1080))
+screen = game.display.set_mode((800, 600))
 clock = game.time.Clock()
 running = True
 
@@ -29,25 +29,16 @@ while running:
 
     # RENDER YOUR GAME HERE
     my_shape = shape.Shape((200, 800), tile_size=5)
+    xpos, ypos = 100, 100
     my_shape.tiles.draw(screen)
-    for j in range(11):
-        alienLevel1 = aliens.AlienAbility(aliens.AlienIconPattern1)
-        alienLevel1.build(200 + j * (10 + alienLevel1.tile_size *10),100)
-        alienLevel1.tiles.draw(screen)
-        alienLevel2 = aliens.AlienAbility(aliens.AlienIconPattern2)
-        alienLevel2.build(200 + j * (10 + alienLevel2.tile_size *10), (100 + (10 + alienLevel2.tile_size *10)))
-        alienLevel2.tiles.draw(screen)
-        alienLevel3 = aliens.AlienAbility(aliens.AlienIconPattern2)
-        alienLevel3.build(200 + j * (10 + alienLevel3.tile_size *10), (100 + 2*(10 + alienLevel3.tile_size *10)))
-        alienLevel3.tiles.draw(screen)
-        alienLevel4 = aliens.AlienAbility(aliens.AlienIconPattern3)
-        alienLevel4.build(200 + j * (10 + alienLevel4.tile_size *10), (100 + 3*(10 + alienLevel4.tile_size *10)))
-        alienLevel4.tiles.draw(screen)
-        alienLevel5 = aliens.AlienAbility(aliens.AlienIconPattern3)
-        alienLevel5.build(200 + j * (10 + alienLevel5.tile_size *10), (100 + 4*(10 + alienLevel5.tile_size *10)))
-        alienLevel5.tiles.draw(screen)
+    aliens_instance = aliens.Aliens(xpos, ypos)
+    aliens_instance.drawAliens()
+
     #I will turn this into a 2d array loop later to reduce redundancy
-    #
+    ufo = aliens.AlienAbility(aliens.AlienIconPattern4, xpos, 40)
+    ufo.build()
+    
+    ufo.tiles.draw(screen)
 
     # update the display after all drawing is done
     game.display.flip()

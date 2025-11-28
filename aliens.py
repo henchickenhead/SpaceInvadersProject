@@ -63,21 +63,19 @@ AlienBulletPattern = [
 ]
 
 class AlienAbility:
-    def __init__(self, pattern):
+    def __init__(self, pattern, xpos, ypos):
         self.speed = 1
-        self.direction = True
-        self.isBorderLeft = False
-        self.isBorderRight = False
         self.isAtBottom = False
         self.tiles = game.sprite.Group() 
-        # increase tile size so the alien icon is visible on screen
-        self.tile_size = 6
+        self.tile_size = 3
         self.pattern = pattern
         self.bullet = AlienBulletPattern
+        self.xpos = xpos
+        self.ypos = ypos
         
 
-    def build(self, offsetX: int, offsetY: int):
-        ox, oy = offsetX, offsetY
+    def build(self):
+        ox, oy = self.xpos, self.ypos
         step = self.tile_size
 
         for r_idx, row in enumerate(self.pattern):
@@ -87,8 +85,68 @@ class AlienAbility:
                     tile = Alien(pos, size=step)
                     self.tiles.add(tile)
 
+    def move(self):
+        pass
+
+class Aliens():
+    def __init__(self, xpos =int , ypos = int ):
+        self.xpos = xpos
+        self.ypos = ypos
+        self.alienClass = Alien((xpos, ypos))
+        self.direction = True
+        self.isBorderLeft = False
+        self.isBorderRight = False
+        self.createAliens()
+
+    def createAliens(self):
+        # create a 2D list (rows x cols) of AlienAbility instances
+        rows = 5
+        cols = 11
+        self.alienArray = []
+        temp = AlienAbility(AlienIconPattern1, self.xpos, self.ypos)
+        spacing = 10 + temp.tile_size * 10
+        for i in range(rows):
+            row = []
+            if i <= 2:
+                for j in range(cols):
+                    xpos = self.xpos + j * spacing
+                    ypos = self.ypos + i * spacing
+                    alien_ability = AlienAbility(AlienIconPattern1, xpos, ypos)
+                    alien_ability.build()
+                    row.append(alien_ability)
+                self.alienArray.append(row)
+            elif i >2 or i <=4:
+                for j in range(cols):
+                    xpos = self.xpos + j * spacing
+                    ypos = self.ypos + i * spacing
+                    alien_ability = AlienAbility(AlienIconPattern2, xpos, ypos)
+                    alien_ability.build()
+                    row.append(alien_ability)
+                self.alienArray.append(row)
+            else:
+                for j in range(cols):
+                    xpos = self.xpos + j * spacing
+                    ypos = self.ypos + i * spacing
+                    alien_ability = AlienAbility(AlienIconPattern3, xpos, ypos)
+                    alien_ability.build()
+                    row.append(alien_ability)
+                self.alienArray.append(row)
+        return self.alienArray
     
+    def drawAliens(self):
+        for alienRow in self.alienArray:
+            for alien in alienRow:
+                alien.build()
+                alien.tiles.draw(game.display.get_surface())
+
+    def shoot(self):
+        pass
+
+    def getShot(self):
+        pass    
 # next steps
-# movement
+# have the aliens array declared in a method here, maybe take in the parameters for the offsets
+
+# # movement
 # shooting
 #disappearing when hit
