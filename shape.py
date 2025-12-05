@@ -39,3 +39,11 @@ class Shape: # class based on a pattern
           pos = (ox + c_idx * step, oy + r_idx * step) # finds out the pixel location where the shape should appear
           tile = Tile(pos, size=step) # creation of a tile object at a location
           self.tiles.add(tile) # puts a new tile to the sprite group
+
+barriers = pygame.sprite.Group()
+
+positions = [(100, 500), (250, 500), (400, 500), (550, 500)]
+for pos in positions:
+  shape = Shape(pos)
+  barriers.add(shape.tiles)
+  barriers.draw(screen)
