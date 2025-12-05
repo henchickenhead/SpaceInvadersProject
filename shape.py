@@ -1,7 +1,7 @@
 import pygame
 
 class Tile(pygame.sprite.Sprite): # Element used to build larger structures
-  def __init__(self, pos, size=3, colour=(255, 0, 0)): # Puts a position, size and colour 
+  def __init__(self, pos, size=3, colour=(0, 255, 0)): # Puts a position, size and colour 
     super().__init__() # Sprite behaviour
     self.image = pygame.Surface((size, size)) # Square surface object with size paramenters
     self.image.fill(colour) # Tile colour
