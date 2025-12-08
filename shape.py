@@ -1,5 +1,11 @@
 import pygame
 
+pygame.init()
+screen = pygame.display.set_mode((800, 600))
+
+player_bullets = pygame.sprite.Group()
+enemy_bullets = pygame.sprite.Group()
+
 class Tile(pygame.sprite.Sprite): # Element used to build larger structures
   def __init__(self, pos, size=3, colour=(0, 255, 0)): # Puts a position, size and colour 
     super().__init__() # Sprite behaviour
@@ -47,7 +53,14 @@ for pos in positions:
     shape = Shape(pos)
     barriers.add(*shape.tiles)
 
+running = True
+
 while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+          
+    screen.fill((0, 0, 0))      
     barriers.draw(screen)
 
     for bullet in player_bullets:
@@ -55,5 +68,13 @@ while running:
             bullet.kill()
 
     for bullet in enemy_bullets:
-        if pygame.spritecollide(bullet, barriers, dokill=True):
+        if pygame.sprite.spritecollide(bullet, barriers, dokill=True):
             bullet.kill()
+
+    for bullet in player_bullets:
+        bullet.rect.y -= 5
+
+    for bullet in enemy_bullets:
+        bullet.rect.y += 5
+          
+    pygame.display.update()
