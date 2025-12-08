@@ -73,8 +73,12 @@ while running:
 
     for bullet in player_bullets:
         bullet.rect.y -= 5
+        if bullet.rect.bottom < 0:
+            bullet.kill()
 
     for bullet in enemy_bullets:
         bullet.rect.y += 5
+        if bullet.rect.top > 600:
+            bullet.kill()
           
     pygame.display.update()
