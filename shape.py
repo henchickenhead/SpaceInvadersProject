@@ -9,7 +9,7 @@ enemy_bullets = pygame.sprite.Group()
 class Tile(pygame.sprite.Sprite): # Element used to build larger structures
   def __init__(self, pos, size=3, colour=(0, 255, 0)): # Puts a position, size and colour 
     super().__init__() # Sprite behaviour
-    self.image = pygame.Surface((size, size)) # Square surface object with size paramenters
+    self.image = pygame.Surface((size, size)) # Square surface object with size parameters
     self.image.fill(colour) # Tile colour
     self.rect = self.image.get_rect(topleft=pos) # Positioning of the tile
 
@@ -30,7 +30,7 @@ pattern = [ # 2D list defining the tiles for the shape
 ]
 
 class Shape: # class based on a pattern
-  def __init__(self, origin, pattern=pattern, tile_size=8): # creates a shape using the pattern and tile size
+  def __init__(self, origin, pattern=pattern, tile_size=3): # creates a shape using the pattern and tile size
     self.tiles = pygame.sprite.Group() # groups all the tiles that make the shape
     self.tile_size = tile_size # used to calculate tile spacing
     self.build(pattern, origin) # method to build the tile layout
@@ -47,7 +47,7 @@ class Shape: # class based on a pattern
           self.tiles.add(tile) # puts a new tile to the sprite group
 
 barriers = pygame.sprite.Group()
-positions = [(100, 500), (250, 500), (400, 500), (550, 500)]
+positions = [(20, 500), (243, 500), (466, 500), (689, 500)]
 
 for pos in positions:
     shape = Shape(pos)
