@@ -1,17 +1,19 @@
 import pygame
 
-pygame.init() # Starts all pygame modules
-screen = pygame.display.set_mode((800, 600)) # Creates the display for the game being 800 pixels wide and 600 pixels tall
+pygame.init()
+screen = pygame.display.set_mode((800, 600))
 
-player_bullets = pygame.sprite.Group() # Sprite Group to hold bullets fired by the player
-enemy_bullets = pygame.sprite.Group() # Sprite Group to hold bullets fired by the enemy
+# Sprite Groups that hold bullets fired by the player and the enemy
+player_bullets = pygame.sprite.Group()
+enemy_bullets = pygame.sprite.Group()
 
-class Tile(pygame.sprite.Sprite): # Element used to build larger structures
-  def __init__(self, pos, size=3, colour=(0, 255, 0)): # Puts a position, size and colour 
-    super().__init__() # Sprite behaviour
-    self.image = pygame.Surface((size, size)) # Square surface object with size parameters
-    self.image.fill(colour) # Tile colour
-    self.rect = self.image.get_rect(topleft=pos) # Positioning of the tile
+# Tile class used to build the barrier shapes
+class Tile(pygame.sprite.Sprite):
+  def __init__(self, pos, size=3, colour=(0, 255, 0)):
+    super().__init__()
+    self.image = pygame.Surface((size, size))
+    self.image.fill(colour)
+    self.rect = self.image.get_rect(topleft=pos)
 
 pattern = [ # 2D list defining the tiles for the shape
   [0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0],
@@ -29,25 +31,27 @@ pattern = [ # 2D list defining the tiles for the shape
   [1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1],
 ]
 
-class Shape: # class based on a pattern
-  def __init__(self, origin, pattern=pattern, tile_size=3): # creates a shape using the pattern and tile size
-    self.tiles = pygame.sprite.Group() # groups all the tiles that make the shape
-    self.tile_size = tile_size # used to calculate tile spacing
-    self.build(pattern, origin) # method to build the tile layout
+# Tile shape build from the 2D pattern above
+class Shape:
+  def __init__(self, origin, pattern=pattern, tile_size=3):
+    self.tiles = pygame.sprite.Group()
+    self.tile_size = tile_size
+    self.build(pattern, origin)
 
-  def build(self, pattern, offset): # changing pattern into tile objects
-    ox, oy = offset # x and y coordiates for where the shape should be at
-    step = self.tile_size # for the pixel distance between tiles
+  def build(self, pattern, offset):
+    ox, oy = offset
+    step = self.tile_size
 
-    for r_idx, row in enumerate(pattern): # loops each row in the pattern then provides an index
-      for c_idx, cell in enumerate(row): # loops each column in the row
-        if cell: # checking if pattern cell is 1
-          pos = (ox + c_idx * step, oy + r_idx * step) # finds out the pixel location where the shape should appear
-          tile = Tile(pos, size=step) # creation of a tile object at a location
-          self.tiles.add(tile) # puts a new tile to the sprite group
-
-barriers = pygame.sprite.Group() # Sprite Group for all barrrier tiles
-positions = [(20, 500), (243, 500), (466, 500), (689, 500)] # Positions of barriers
+    for r_idx, row in enumerate(pattern):
+      for c_idx, cell in enumerate(row):
+        if cell:
+          pos = (ox + c_idx * step, oy + r_idx * step)
+          tile = Tile(pos, size=step)
+          self.tiles.add(tile)
+          
+# Generates four barriers near the bottom of the screen with different positions
+barriers = pygame.sprite.Group()
+positions = [(20, 500), (243, 500), (466, 500), (689, 500)]
 
 for pos in positions:
     shape = Shape(pos)
@@ -60,24 +64,26 @@ while running:
         if event.type == pygame.QUIT:
             running = False
           
-    screen.fill((0, 0, 0)) # Clears the screen for every frame      
-    barriers.draw(screen) # Draws barrier tiles to the screen
+    screen.fill((0, 0, 0))    
+    barriers.draw(screen)
 
+    # Bullet barrier collisions handling
     for bullet in player_bullets:
-        if pygame.sprite.spritecollide(bullet, barriers, dokill=True): # This code checks for collisions between barriers and player bullets
+        if pygame.sprite.spritecollide(bullet, barriers, dokill=True):
             bullet.kill()
 
     for bullet in enemy_bullets:
-        if pygame.sprite.spritecollide(bullet, barriers, dokill=True): # This code checks for collisions between barriers and enemy bullets
+        if pygame.sprite.spritecollide(bullet, barriers, dokill=True):
             bullet.kill()
-
+          
+    # Movement of bullets and deletion when off-screen 
     for bullet in player_bullets:
-        bullet.rect.y -= 5 # This code controls the movement of player bullets and removes the bullet when off-screen
+        bullet.rect.y -= 5
         if bullet.rect.bottom < 0:
             bullet.kill()
 
     for bullet in enemy_bullets:
-        bullet.rect.y += 5 # This code controls the movement of enemy bullets and removes the bullet when off-screen
+        bullet.rect.y += 5
         if bullet.rect.top > 600:
             bullet.kill()
           
