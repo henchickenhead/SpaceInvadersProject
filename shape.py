@@ -1,10 +1,10 @@
 import pygame
 
-pygame.init()
-screen = pygame.display.set_mode((800, 600))
+pygame.init() # Starts all pygame modules
+screen = pygame.display.set_mode((800, 600)) # Creates the display for the game being 800 pixels wide and 600 pixels tall
 
-player_bullets = pygame.sprite.Group()
-enemy_bullets = pygame.sprite.Group()
+player_bullets = pygame.sprite.Group() # Sprite Group to hold bullets fired by the player
+enemy_bullets = pygame.sprite.Group() # Sprite Group to hold bullets fired by the enemy
 
 class Tile(pygame.sprite.Sprite): # Element used to build larger structures
   def __init__(self, pos, size=3, colour=(0, 255, 0)): # Puts a position, size and colour 
@@ -46,8 +46,8 @@ class Shape: # class based on a pattern
           tile = Tile(pos, size=step) # creation of a tile object at a location
           self.tiles.add(tile) # puts a new tile to the sprite group
 
-barriers = pygame.sprite.Group()
-positions = [(20, 500), (243, 500), (466, 500), (689, 500)]
+barriers = pygame.sprite.Group() # Sprite Group for all barrrier tiles
+positions = [(20, 500), (243, 500), (466, 500), (689, 500)] # Positions of barriers
 
 for pos in positions:
     shape = Shape(pos)
@@ -60,24 +60,24 @@ while running:
         if event.type == pygame.QUIT:
             running = False
           
-    screen.fill((0, 0, 0))      
-    barriers.draw(screen)
+    screen.fill((0, 0, 0)) # Clears the screen for every frame      
+    barriers.draw(screen) # Draws barrier tiles to the screen
 
     for bullet in player_bullets:
-        if pygame.sprite.spritecollide(bullet, barriers, dokill=True):
+        if pygame.sprite.spritecollide(bullet, barriers, dokill=True): # This code checks for collisions between barriers and player bullets
             bullet.kill()
 
     for bullet in enemy_bullets:
-        if pygame.sprite.spritecollide(bullet, barriers, dokill=True):
+        if pygame.sprite.spritecollide(bullet, barriers, dokill=True): # This code checks for collisions between barriers and enemy bullets
             bullet.kill()
 
     for bullet in player_bullets:
-        bullet.rect.y -= 5
+        bullet.rect.y -= 5 # This code controls the movement of player bullets and removes the bullet when off-screen
         if bullet.rect.bottom < 0:
             bullet.kill()
 
     for bullet in enemy_bullets:
-        bullet.rect.y += 5
+        bullet.rect.y += 5 # This code controls the movement of enemy bullets and removes the bullet when off-screen
         if bullet.rect.top > 600:
             bullet.kill()
           
