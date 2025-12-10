@@ -1,7 +1,5 @@
 import pygame
 
-pygame.init() # Starts all pygame modules
-screen = pygame.display.set_mode((800, 600)) # Creates the display for the game being 800 pixels wide and 600 pixels tall
 
 player_bullets = pygame.sprite.Group() # Sprite Group to hold bullets fired by the player
 enemy_bullets = pygame.sprite.Group() # Sprite Group to hold bullets fired by the enemy
@@ -33,7 +31,11 @@ class Shape: # class based on a pattern
   def __init__(self, origin, pattern=pattern, tile_size=3): # creates a shape using the pattern and tile size
     self.tiles = pygame.sprite.Group() # groups all the tiles that make the shape
     self.tile_size = tile_size # used to calculate tile spacing
+    self.position = origin # position of the shape
     self.build(pattern, origin) # method to build the tile layout
+
+  def getPosition(self):
+      return self.position
 
   def build(self, pattern, offset): # changing pattern into tile objects
     ox, oy = offset # x and y coordiates for where the shape should be at
@@ -45,40 +47,47 @@ class Shape: # class based on a pattern
           pos = (ox + c_idx * step, oy + r_idx * step) # finds out the pixel location where the shape should appear
           tile = Tile(pos, size=step) # creation of a tile object at a location
           self.tiles.add(tile) # puts a new tile to the sprite group
+        
+class ShapesManager:
+  def __init__(self):
+      self.barriers = [pygame.sprite.Group()]
+      self.positions = [(20, 500), (243, 500), (466, 500), (689, 500)]
+      for pos in self.positions:
+          shape = Shape(pos)
+          self.barriers.append(shape)
 
-barriers = pygame.sprite.Group() # Sprite Group for all barrrier tiles
-positions = [(20, 500), (243, 500), (466, 500), (689, 500)] # Positions of barriers
+  def drawBarriers(self):
+      surface = pygame.display.get_surface()
+      for blocks in self.barriers:
+        if hasattr(blocks, 'tiles'):
+          blocks.tiles.draw(surface)
 
-for pos in positions:
-    shape = Shape(pos)
-    barriers.add(*shape.tiles)
-
-running = True
-
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-          
-    screen.fill((0, 0, 0)) # Clears the screen for every frame      
-    barriers.draw(screen) # Draws barrier tiles to the screen
-
-    for bullet in player_bullets:
-        if pygame.sprite.spritecollide(bullet, barriers, dokill=True): # This code checks for collisions between barriers and player bullets
-            bullet.kill()
-
+  def getShotAt(self, alienbullets):
+    for barrier in self.barriers:
+      if hasattr(barrier, 'tiles'):
+        for bullet in alienbullets:
+          if pygame.sprite.spritecollide(bullet, barrier.tiles, dokill=True):
+              bullet.kill()
+              # barrier.tiles.destroy()
     for bullet in enemy_bullets:
-        if pygame.sprite.spritecollide(bullet, barriers, dokill=True): # This code checks for collisions between barriers and enemy bullets
+        if pygame.sprite.spritecollide(bullet, barrier.tiles, dokill=True):
             bullet.kill()
-
-    for bullet in player_bullets:
-        bullet.rect.y -= 5 # This code controls the movement of player bullets and removes the bullet when off-screen
-        if bullet.rect.bottom < 0:
-            bullet.kill()
-
-    for bullet in enemy_bullets:
-        bullet.rect.y += 5 # This code controls the movement of enemy bullets and removes the bullet when off-screen
-        if bullet.rect.top > 600:
-            bullet.kill()
+            # barrier.tiles.destroy()
           
-    pygame.display.update()
+  #     else:
+  #       for shape_tiles in self.barriers:
+  #           for bullet in playerbullets:
+  #               if pygame.sprite.spritecollide(bullet, shape_tiles, dokill=True):
+  #                   bullet.kill()
+  #                   shape_tiles.kill()
+        # for bullet in player_bullets:
+        # bullet.rect.y -= 5
+        # if bullet.rect.bottom < 0:
+        #     bullet.kill()
+
+  # for bullet in player_bullets:
+  #     bullet.rect.y -= 5 # This code controls the movement of player bullets and removes the bullet when off-screen
+  #     if bullet.rect.bottom < 0:
+  #         bullet.kill()
+
+

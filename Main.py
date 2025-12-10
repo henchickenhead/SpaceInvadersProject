@@ -10,6 +10,7 @@ screen = game.display.set_mode((800, 700))
 clock = game.time.Clock()
 running = True
 aliens_instance = aliens.Aliens()
+my_shape = shape.ShapesManager()
 counter = 0 
 
 while running:
@@ -30,11 +31,11 @@ while running:
 
     # fill the screen with a color to wipe away anything from last frame
     screen.fill("black")
-    # bullets = aliens_instance.getBullets()
+    bullets = aliens_instance.getBullets()
     # print(bullets)
     # RENDER YOUR GAME HERE
-    my_shape = shape.Shape((100, 500), tile_size=3)
-    my_shape.tiles.draw(screen)
+    my_shape.drawBarriers()
+    my_shape.getShotAt(aliens_instance.getBullets())
     aliens_instance.drawAliens()
     aliens_instance.groupMove(counter)
     aliens_instance.borderCheck()
