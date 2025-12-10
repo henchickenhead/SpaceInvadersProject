@@ -1,0 +1,165 @@
+import pygame
+pygame.init()
+from time import sleep
+
+#Class to handle the gun platform based on pygame Sprite class
+class GunPlatform(pygame.sprite.Sprite):
+    def __init__(self):
+        #You have to initialise the super class first
+        super().__init__()
+        #Set the sprite's image (this returns a surface for the sprite stored in self.image attribute)
+        self.image = pygame.image.load('Images/GunPlatform_g.png')
+        #Get a Rectangle that locates the size and position of the surface. Defaults location to 0,0
+        self.rect = self.image.get_rect()
+        self.explosionCount = 0
+
+    def moveRight(self, pixels):
+        if self.rect.x < 661:
+            self.rect.x += pixels
+    def moveLeft(self, pixels):
+        if self.rect.x > 5:
+            self.rect.x -= pixels
+    def animateExplosion(self) -> bool | None:
+        match self.explosionCount:
+            case 0:
+                self.image = pygame.image.load('Explode1.png')
+                self.explosionCount += 1
+                # Update the display for the sprite's rectangle
+                #pygame.display.update(self.rect)
+                return True
+            case 1:
+                self.image = pygame.image.load('Explode2.png')
+                self.explosionCount += 1
+                # Update the display for the sprite's rectangle
+                #pygame.display.update(self.rect)
+                return True
+            case 2:
+                self.image = pygame.image.load('Explode3.png')
+                # Update the display for the sprite's rectangle
+                #pygame.display.update(self.rect)
+                return False
+        return None
+
+
+class Bullet(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        self.image = pygame.image.load('Images/bullet_gs1.png')
+        self.rect = self.image.get_rect()
+    def update(self):
+        killed_alien_list = pygame.sprite.spritecollide(self, space_invader_sprites, False)
+        if killed_alien_list:
+            killed_alien_list[0].animateExplosion()
+            self.kill()
+        else:
+            if self.rect.y < 10:
+                self.kill()
+            else:
+                self.moveUp(10)
+
+    def moveUp(self,pixels):
+        self.rect.y -= pixels
+
+class SpaceInvader(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        self.image = pygame.image.load('Images/SpaceInvader1_w.png')
+        self.rect = self.image.get_rect()
+        self.dead = False
+        self.animation_timer = 0
+    def update(self):
+        if self.dead and self.animation_timer > 90:
+            self.kill()
+        elif self.dead:
+            self.animation_timer += 10
+    def animateExplosion(self):
+        self.image = pygame.image.load('Images/SI_Explode_w.png')
+        self.dead = True
+
+
+
+
+# Open a new window
+SCREEN_WIDTH = 700
+SCREEN_HEIGHT = 500
+screen_size = (SCREEN_WIDTH, SCREEN_HEIGHT)
+screen = pygame.display.set_mode(screen_size)
+pygame.display.set_caption("Tristan's First Game")
+
+# The clock will be used to control how fast the screen updates in fps
+clock = pygame.time.Clock()
+
+# First, clear the screen to white.
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+screen.fill(WHITE)
+
+g = GunPlatform()
+g.rect.x=200
+g.rect.y=SCREEN_HEIGHT - 50
+s = SpaceInvader()
+s.rect.x = 50
+s.rect.y = 50
+
+bullet_sprites = pygame.sprite.Group()
+space_invader_sprites = pygame.sprite.Group()
+gun_platform_sprite = pygame.sprite.GroupSingle()
+gun_platform_sprite.add(g)
+space_invader_sprites.add(s)
+
+running = True
+gunPlatformExploding = False
+explosionTimer = 0
+bullet_sprites.draw(screen)
+space_invader_sprites.draw(screen)
+gun_platform_sprite.draw(screen)
+pygame.display.update()
+
+#This is the manin game loop
+while running:
+    #Refresh the screen
+    background = pygame.image.load("StarField.png")
+    screen.blit(pygame.transform.scale(background,screen_size), (0, 0))
+    # First check for events (QUIT or fire button pressed)
+    for event in pygame.event.get():
+        match event.type:
+            case pygame.QUIT:
+                running = False
+            case pygame.KEYDOWN:
+                match event.key:
+                    #Fire button
+                    case pygame.K_SPACE:
+                        b = Bullet()
+                        b.rect.x = g.rect.x + 16
+                        b.rect.y = g.rect.y + 16
+                        bullet_sprites.add(b)
+                    case pygame.K_LEFT:
+                        g.moveLeft(5)
+                    case pygame.K_UP:
+                        gunPlatformExploding = g.animateExplosion()
+                        explosionTimer = pygame.time.get_ticks()
+
+    # Check if the gun platform is being moved (L or R arrow keys are being pressed)
+    keys_pressed = pygame.key.get_pressed()
+    if keys_pressed[pygame.K_LEFT]:
+            g.moveLeft(5)
+    if keys_pressed[pygame.K_RIGHT]:
+            g.moveRight(5)
+
+    #Check if the Gun Platform has been hit and is in the process of exploding
+    if gunPlatformExploding and (pygame.time.get_ticks() - explosionTimer > 100):
+        gunPlatformExploding = g.animateExplosion()
+        explosionTimer = pygame.time.get_ticks()
+
+
+    #Move all the bullets sprites up the screen by 10 pixels
+    bullet_sprites.update()
+    space_invader_sprites.update()
+
+    clock.tick(30)
+    #Display all sprites in the groups
+    bullet_sprites.draw(screen)
+    space_invader_sprites.draw(screen)
+    gun_platform_sprite.draw(screen)
+
+    pygame.display.update()
