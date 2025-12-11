@@ -1,15 +1,16 @@
 import pygame
 
+# Sprite groups to hold bullets fired by the player and enemyy
+player_bullets = pygame.sprite.Group()
+enemy_bullets = pygame.sprite.Group()
 
-player_bullets = pygame.sprite.Group() # Sprite Group to hold bullets fired by the player
-enemy_bullets = pygame.sprite.Group() # Sprite Group to hold bullets fired by the enemy
-
-class Tile(pygame.sprite.Sprite): # Element used to build larger structures
-  def __init__(self, pos, size=3, colour=(0, 255, 0)): # Puts a position, size and colour 
-    super().__init__() # Sprite behaviour
-    self.image = pygame.Surface((size, size)) # Square surface object with size parameters
-    self.image.fill(colour) # Tile colour
-    self.rect = self.image.get_rect(topleft=pos) # Positioning of the tile
+# Small square sprite built using the Tile class with a position, size and colour
+class Tile(pygame.sprite.Sprite):
+  def __init__(self, pos, size=3, colour=(0, 255, 0)):
+    super().__init__()
+    self.image = pygame.Surface((size, size))
+    self.image.fill(colour)
+    self.rect = self.image.get_rect(topleft=pos)
 
 pattern = [ # 2D list defining the tiles for the shape
   [0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0],
@@ -27,26 +28,28 @@ pattern = [ # 2D list defining the tiles for the shape
   [1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1],
 ]
 
-class Shape: # class based on a pattern
-  def __init__(self, origin, pattern=pattern, tile_size=3): # creates a shape using the pattern and tile size
-    self.tiles = pygame.sprite.Group() # groups all the tiles that make the shape
-    self.tile_size = tile_size # used to calculate tile spacing
-    self.position = origin # position of the shape
-    self.build(pattern, origin) # method to build the tile layout
+# Barrier shape built from the pattern above
+class Shape:
+  def __init__(self, origin, pattern=pattern, tile_size=3):
+    self.tiles = pygame.sprite.Group()
+    self.tile_size = tile_size
+    self.position = origin
+    self.build(pattern, origin)
 
   def getPosition(self):
       return self.position
 
-  def build(self, pattern, offset): # changing pattern into tile objects
-    ox, oy = offset # x and y coordiates for where the shape should be at
-    step = self.tile_size # for the pixel distance between tiles
+  # Changes the 2D pattern into tile sprites
+  def build(self, pattern, offset):
+    ox, oy = offset
+    step = self.tile_size
 
-    for r_idx, row in enumerate(pattern): # loops each row in the pattern then provides an index
-      for c_idx, cell in enumerate(row): # loops each column in the row
-        if cell: # checking if pattern cell is 1
-          pos = (ox + c_idx * step, oy + r_idx * step) # finds out the pixel location where the shape should appear
-          tile = Tile(pos, size=step) # creation of a tile object at a location
-          self.tiles.add(tile) # puts a new tile to the sprite group
+    for r_idx, row in enumerate(pattern):
+      for c_idx, cell in enumerate(row):
+        if cell:
+          pos = (ox + c_idx * step, oy + r_idx * step)
+          tile = Tile(pos, size=step)
+          self.tiles.add(tile)
 
 class ShapesManager:
   def __init__(self):
