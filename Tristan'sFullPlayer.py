@@ -1,6 +1,13 @@
 import pygame
 pygame.init()
 import random
+import shape
+import aliens
+
+# Initialize game objects
+aliens_instance = aliens.Aliens()
+my_shape = shape.ShapesManager()
+counter = 0
 
 #------------------------These are the classes for the gun platform and bullets (by Tris)----------
 # The Gun Platform object will be added to a sprite group called gun_platform_sprites.
@@ -243,6 +250,7 @@ gun_platform_sprites.add(gun_platform)
 # Dylan's code for this goes here
 
 
+
 #Tris Create the player lives
 num_lives = 2
 Life1 = Life(20, SCREEN_HEIGHT-40)
@@ -282,6 +290,15 @@ while running:
                         if gun_platform.isAlive():
                             gun_platform.shootBullet()
 
+    bullets = aliens_instance.getBullets()
+    # print(bullets)
+    # RENDER YOUR GAME HERE
+    my_shape.drawBarriers()
+    my_shape.getShotAt(aliens_instance.getBullets())
+    aliens_instance.drawAliens()
+    aliens_instance.groupMove(counter)
+    aliens_instance.borderCheck()
+    counter+=1
     # Tris's code
     # Check if the gun platform is being moved (L or R arrow keys are being pressed)
     keys_pressed = pygame.key.get_pressed()

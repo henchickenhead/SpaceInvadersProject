@@ -75,7 +75,6 @@ AlienIconPattern4 = [
 
 class AlienAbility:
     def __init__(self, pattern, xpos, ypos):
-        self.speed = 1
         self.isAlive = True
         self.direction = True
         self.isAtEdge = False
@@ -100,11 +99,11 @@ class AlienAbility:
                     tile = Alien(pos, size=step)
                     self.tiles.add(tile)
 
-    def move(self):
+    def move(self, speed):
         if self.direction:
-            dx = self.speed * 5 
+            dx = speed * 5 
         else:
-            dx = -self.speed * 5
+            dx = - speed * 5
         self.xpos += dx
         for tile in self.tiles:
             tile.rect.x += dx
@@ -140,23 +139,28 @@ class Aliens():
         # central bullets group for all alien bullets
         self.bullets = game.sprite.Group()
         self.createAliens()
+        self.speed = 1
         
     def borderCheck(self):
+        self.gameOver = False
         for alienRow in self.alienArray:
             for alien in alienRow:
-                if alien.xpos <= 100 or alien.xpos >= game.display.Info().current_w - 100:
+                if alien.xpos <= 5 or alien.xpos >= game.display.Info().current_w - 30:
                     print("Edge reached")
                     self.isBorder = True
                 if alien.ypos >= game.display.Info().current_h - 175:
                     self.canMove = False
                     print("Aliens have landed!")
+                    self.gameOver = True
         if self.isBorder:
             for alienRow in self.alienArray:
                 for alien in alienRow:
                     alien.dropDown()
-                    alien.move()
+                    alien.move(self.speed)
             self.isBorder = False
 
+    def getGameOver(self):
+        return self.gameOver
 
     def createAliens(self):
         rows = 5
@@ -208,16 +212,23 @@ class Aliens():
             for alienRow in self.alienArray:
                 for alien in alienRow:
                     if counter is None:
-                        alien.move()
+                        alien.move(self.speed)
                     else:
-                        period = max(1, int(20 / alien.speed))
+                        period = max(1, int(20 / self.speed))
                         if counter % period == 0:
-                            alien.move()
+                            alien.move(self.speed)
                     if random.randint(0, 1000) % 100 == 0:
                         self.shoot()
     
     def getBullets(self):
         return self.bullets
+    
+    def getAllAliens(self):
+        tilesArray = []
+        for alienRow in self.alienArray:
+            for alien in alienRow:
+                tilesArray.append(alien.tiles)
+        return tilesArray
 
     def shoot(self):
         if len(self.bullets.sprites()) > 3:
@@ -228,7 +239,10 @@ class Aliens():
             col = random.randint(0, cols - 1)
             shooter = None
             for row in reversed(self.alienArray):
-                a = row[col]
+                try:
+                    a = row[col]
+                except IndexError:
+                    continue
                 if getattr(a, 'isAlive', True):
                     shooter = a
                     break
@@ -242,13 +256,16 @@ class Aliens():
     def getShot(self, bulletPosition):
         for alienRow in self.alienArray:
             for alien in alienRow:
-                if bulletPosition.colliderect(alien.tiles.sprites()[0].rect):
-                    alienRow.remove(alien)
-                    print("Alien hit!")
-                    self.isShot = True
+                if getattr(alien, 'isAlive', True) and alien.tiles:
+                    if game.sprite.spritecollide(bulletPosition, alien.tiles, dokill=True):
+                        alienRow.remove(alien)
+                        print("Alien hit!")
+                        self.isShot = True
+                        return alien
                 if self.isShot:
-                    alien.speed += 0.2
+                    self.speed += 0.1
                     self.isShot = False
+                    return None
 
 # have the aliens array declared in a method here, maybe take in the parameters for the offsets
 
