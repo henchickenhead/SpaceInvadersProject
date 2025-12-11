@@ -71,7 +71,8 @@ class ShapesManager:
         for bullet in alienbullets:
           if pygame.sprite.spritecollide(bullet, barrier.tiles, dokill=True):
               bullet.kill()
-              # barrier.tiles.destroy()
+          if bullet.rect.bottom < 0:
+              bullet.kill()
     for bullet in enemy_bullets:
         if pygame.sprite.spritecollide(bullet, barrier.tiles, dokill=True):
             bullet.kill()
@@ -84,9 +85,7 @@ class ShapesManager:
   #                   bullet.kill()
   #                   shape_tiles.kill()
         # for bullet in player_bullets:
-        # bullet.rect.y -= 5
-        # if bullet.rect.bottom < 0:
-        #     bullet.kill()
+        # 
 
   # for bullet in player_bullets:
   #     bullet.rect.y -= 5 # This code controls the movement of player bullets and removes the bullet when off-screen
